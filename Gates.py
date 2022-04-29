@@ -4,7 +4,14 @@ def val(id):
 	return ctypes.cast(id,ctypes.py_object).value
 
 def toForm(A,txt):
-	if txt[1] not in ['&','+']:
+	if txt[0] == '-':
+		if txt[1] not in A.outputs.keys():
+			A.inputs[txt[1]] = I(0)
+			alpha = A.inputs[txt[1]]
+		else:
+			alpha = A.outputs[txt[1]]
+		return NOT(alpha)
+	elif txt[1] not in ['&','+','-']:
 		if txt[0] not in A.outputs.keys():
 			A.inputs[txt[0]] = I(0)
 			return O(A.inputs[txt[0]])
@@ -32,6 +39,7 @@ def toForm(A,txt):
 		else:
 			beta = A.outputs[txt[2]]
 		return OR(alpha,beta)
+
 class CIRCUIT:
 	def __init__(self,definition):
 		self.text = definition
@@ -95,6 +103,8 @@ class NOT:
 	def __bool__(self):
 		return not bool(val(self.a))
 
-AND4WAY = CIRCUIT("A&B=E,C&D=F,E&F=Z,Z+H=U")
-AND4WAY.C('H')
-AND4WAY.display()
+NAND = CIRCUIT("P&Q=Z,-Z=U")
+NAND.display()
+NAND.C('P')
+NAND.C('Q')
+NAND.display()
