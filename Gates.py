@@ -11,7 +11,7 @@ def toForm(A,txt):
 		else:
 			alpha = A.outputs[txt[1]]
 		return NOT(alpha)
-	elif txt[1] not in ['&','+','-']:
+	elif txt[1] not in ['&','+','-','!']:
 		if txt[0] not in A.outputs.keys():
 			A.inputs[txt[0]] = I(0)
 			return O(A.inputs[txt[0]])
@@ -39,6 +39,18 @@ def toForm(A,txt):
 		else:
 			beta = A.outputs[txt[2]]
 		return OR(alpha,beta)
+	elif txt[1] == '!':
+		if txt[0] not in A.outputs.keys():
+			A.inputs[txt[0]] = I(0)
+			alpha = A.inputs[txt[0]]
+		else:
+			alpha = A.outputs[txt[0]]
+		if txt[2] not in A.outputs.keys():
+			A.inputs[txt[2]] = I(0)
+			beta = A.inputs[txt[2]]
+		else:
+			beta = A.outputs[txt[2]]
+		return XOR(alpha,beta)
 
 class CIRCUIT:
 	def __init__(self,definition):
@@ -46,6 +58,7 @@ class CIRCUIT:
 		self.inputs = {}
 		self.outputs = {}
 		self.define()
+		self.total = {}
 	def define(self):
 		forms = self.text.split(',')
 		for sub in forms:
@@ -58,8 +71,14 @@ class CIRCUIT:
 		print("OUTPUTS")
 		for key in self.outputs:
 			print(key,':',bool(self.outputs[key]))
+		if len(self.total.keys())!=0:
+			print("TOTAL")
+			for key in self.total.keys():
+				print(self.total[key],':',bool(self.outputs[key]))
 	def C(self,key):
 		self.inputs[key].C()
+	def setimp(self,output,desc):
+		self.total[output] = desc
 
 
 class I:
@@ -103,8 +122,3 @@ class NOT:
 	def __bool__(self):
 		return not bool(val(self.a))
 
-NAND = CIRCUIT("P&Q=Z,-Z=U")
-NAND.display()
-NAND.C('P')
-NAND.C('Q')
-NAND.display()
