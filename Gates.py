@@ -3,11 +3,8 @@ import ctypes
 def val(id):
 	return ctypes.cast(id,ctypes.py_object).value
 
-"(AB)=Y,(AC)=Z"
-"((AB)C)=Y"
-
 def toForm(A,txt):
-	if txt[1] not in ['&']:
+	if txt[1] not in ['&','+']:
 		if txt[0] not in A.outputs.keys():
 			A.inputs[txt[0]] = I(0)
 			return O(A.inputs[txt[0]])
@@ -23,8 +20,18 @@ def toForm(A,txt):
 		else:
 			beta = A.outputs[txt[2]]
 		return AND(alpha,beta)
-		
-
+	elif txt[1] == '+':
+		if txt[0] not in A.outputs.keys():
+			A.inputs[txt[0]] = I(0)
+			alpha = A.inputs[txt[0]]
+		else:
+			alpha = A.outputs[txt[0]]
+		if txt[2] not in A.outputs.keys():
+			A.inputs[txt[2]] = I(0)
+			beta = A.inputs[txt[2]]
+		else:
+			beta = A.outputs[txt[2]]
+		return OR(alpha,beta)
 class CIRCUIT:
 	def __init__(self,definition):
 		self.text = definition
@@ -88,9 +95,6 @@ class NOT:
 	def __bool__(self):
 		return not bool(val(self.a))
 
-AND4WAY = CIRCUIT("A&B=E,C&D=F,E&F=Z")
-AND4WAY.C('A')
-AND4WAY.C('B')
-AND4WAY.C('C')
-AND4WAY.C('D')
+AND4WAY = CIRCUIT("A&B=E,C&D=F,E&F=Z,Z+H=U")
+AND4WAY.C('H')
 AND4WAY.display()
