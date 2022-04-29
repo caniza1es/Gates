@@ -32,7 +32,7 @@ def toForm(A,txt):
 		return AND(alpha,beta)
 	elif txt[1] == '+':
 		if txt[0] not in A.outputs.keys():
-			if txt[0] not in A.input.keys():
+			if txt[0] not in A.inputs.keys():
 				A.inputs[txt[0]] = I(0)
 			alpha = A.inputs[txt[0]]
 		else:
