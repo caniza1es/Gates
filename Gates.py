@@ -6,15 +6,24 @@ def val(id):
 "(AB)=Y,(AC)=Z"
 "((AB)C)=Y"
 
-"A=C,B=Y"
-
 def toForm(A,txt):
-	if txt[0] not in ['(',')']:
-		A.inputs[txt[0]] = I(0)
-		try:
-			return O(toForm(A,txt[1:]))
-		except:
+	if txt[1] not in ['&']:
+		if txt[0] not in A.outputs.keys():
+			A.inputs[txt[0]] = I(0)
 			return O(A.inputs[txt[0]])
+	elif txt[1] == '&':
+		if txt[0] not in A.outputs.keys():
+			A.inputs[txt[0]] = I(0)
+			alpha = A.inputs[txt[0]]
+		else:
+			alpha = A.outputs[txt[0]]
+		if txt[2] not in A.outputs.keys():
+			A.inputs[txt[2]] = I(0)
+			beta = A.inputs[txt[2]]
+		else:
+			beta = A.outputs[txt[2]]
+		return AND(alpha,beta)
+		
 
 class CIRCUIT:
 	def __init__(self,definition):
@@ -79,9 +88,9 @@ class NOT:
 	def __bool__(self):
 		return not bool(val(self.a))
 
-A = CIRCUIT("A=C,B=Y")
-A.display()
-A.C('A')
-A.C('B')
-print("")
-A.display()
+AND4WAY = CIRCUIT("A&B=E,C&D=F,E&F=Z")
+AND4WAY.C('A')
+AND4WAY.C('B')
+AND4WAY.C('C')
+AND4WAY.C('D')
+AND4WAY.display()
