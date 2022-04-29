@@ -6,18 +6,21 @@ def val(id):
 def toForm(A,txt):
 	if txt[0] == '-':
 		if txt[1] not in A.outputs.keys():
-			A.inputs[txt[1]] = I(0)
+			if txt[1] not in A.inputs.keys():
+				A.inputs[txt[1]] = I(0)
 			alpha = A.inputs[txt[1]]
 		else:
 			alpha = A.outputs[txt[1]]
 		return NOT(alpha)
 	elif txt[1] not in ['&','+','-','!']:
 		if txt[0] not in A.outputs.keys():
-			A.inputs[txt[0]] = I(0)
+			if txt[0] not in A.inputs.keys():
+				A.inputs[txt[0]] = I(0)
 			return O(A.inputs[txt[0]])
 	elif txt[1] == '&':
 		if txt[0] not in A.outputs.keys():
-			A.inputs[txt[0]] = I(0)
+			if txt[0] not in A.inputs.keys():
+				A.inputs[txt[0]] = I(0)
 			alpha = A.inputs[txt[0]]
 		else:
 			alpha = A.outputs[txt[0]]
@@ -29,7 +32,8 @@ def toForm(A,txt):
 		return AND(alpha,beta)
 	elif txt[1] == '+':
 		if txt[0] not in A.outputs.keys():
-			A.inputs[txt[0]] = I(0)
+			if txt[0] not in A.input.keys():
+				A.inputs[txt[0]] = I(0)
 			alpha = A.inputs[txt[0]]
 		else:
 			alpha = A.outputs[txt[0]]
@@ -41,12 +45,14 @@ def toForm(A,txt):
 		return OR(alpha,beta)
 	elif txt[1] == '!':
 		if txt[0] not in A.outputs.keys():
-			A.inputs[txt[0]] = I(0)
+			if txt[0] not in A.inputs.keys():
+				A.inputs[txt[0]] = I(0)
 			alpha = A.inputs[txt[0]]
 		else:
 			alpha = A.outputs[txt[0]]
 		if txt[2] not in A.outputs.keys():
-			A.inputs[txt[2]] = I(0)
+			if txt[2] not in A.inputs.keys():
+				A.inputs[txt[2]] = I(0)
 			beta = A.inputs[txt[2]]
 		else:
 			beta = A.outputs[txt[2]]
@@ -121,4 +127,12 @@ class NOT:
 		self.a = id(val)
 	def __bool__(self):
 		return not bool(val(self.a))
+
+FULLADDER = CIRCUIT("A&B=D,A!B=E,E&C=P,E!C=O,D+P=U")
+FULLADDER.setimp('U','carry')
+FULLADDER.setimp('O','output')
+FULLADDER.C('A')
+FULLADDER.C('B')
+FULLADDER.C('C')
+FULLADDER.display()
 
